@@ -1,0 +1,61 @@
+body, html {
+  margin: 0;
+  padding: 0;
+  font-family: 'Arial', sans-serif;
+  background-color: #f8f8f8;
+  color: #4a4a4a;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 20px auto;
+  padding: 20px;
+  background-color: rgba(255, 255, 255, 0.95);
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(255, 85, 85, 0.1);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  margin-top: 0;
+  color: #ff5555;
+}
+
+a {
+  color: #ff5555;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+a:hover {
+  color: #ff7777;
+}
+
+button {
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+
+
+/* Dark Mode Styling */
+[data-theme="dark"] body, [data-theme="dark"] html {
+  background-color: #222;
+  color: #ddd;
+}
+
+[data-theme="dark"] .container {
+  background-color: rgba(50, 50, 50, 0.95);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+[data-theme="dark"] h1, [data-theme="dark"] h2, [data-theme="dark"] h3, [data-theme="dark"] h4, [data-theme="dark"] h5, [data-theme="dark"] h6 {
+  color: #eee;
+}
+
+[data-theme="dark"] a {
+  color: #dd5555;
+}
+
+[data-theme="dark"] a:hover {
+  color: #ff7777;
+}
