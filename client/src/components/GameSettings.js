@@ -10,7 +10,6 @@ function GameSettings() {
     const [error, setError] = useState(null);
     const [playerColor, setPlayerColor] = useState('white');
 
-
     const generateGame = (duration) => {
         setLoading(true);
         const player1_id = "someUniqueId";
@@ -29,7 +28,6 @@ function GameSettings() {
             });
     }
     
-
     const TimerButton = ({ duration, onClick }) => (
         <button 
             className="timer-btn-component"

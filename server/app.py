@@ -4,6 +4,8 @@ from models import Game, Move, Player, ChatMessage
 import string
 import random
 import subprocess
+import chess
+import chess.engine
 from flask_socketio import SocketIO, emit, join_room
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
@@ -20,6 +22,7 @@ migrate = Migrate(app, db)
 
 
 
+
 stockfish_path = "stockfish"
 stockfish = subprocess.Popen(
     stockfish_path,
@@ -28,6 +31,7 @@ stockfish = subprocess.Popen(
     stdout=subprocess.PIPE,
     stderr=subprocess.PIPE
 )
+engine = chess.engine.SimpleEngine.popen_uci("/home/dominick/Flatiron/code/5-phase/project/final-project/stockfish/stockfish-ubuntu-x86-64-avx2")
 
 def send_command(stockfish, cmd):
     stockfish.stdin.write(cmd + '\n')
@@ -44,6 +48,38 @@ def get_stockfish_output(stockfish):
 
 send_command(stockfish, "uci")
 send_command(stockfish, "setoption name Threads value 2")
+
+def get_stockfish_move(fen):
+    stockfish_path = "/home/dominick/Flatiron/code/5-phase/project/final-project/stockfish/stockfish-ubuntu-x86-64-avx2"
+    command = f"{stockfish_path}"
+    process = subprocess.Popen(
+        command,
+        universal_newlines=True,
+        stdin=subprocess.PIPE,
+        stdout=subprocess.PIPE,
+    )
+    process.stdin.write(f"position fen {fen}\n")
+    process.stdin.write("go\n")
+    process.stdin.flush()
+
+    while True:
+        output = process.stdout.readline().strip()
+        if "bestmove" in output:
+            break
+
+    best_move = output.split(" ")[1]
+    return best_move
+
+@app.route('/best_move', methods=['POST'])
+def best_move():
+    fen = request.json.get('fen')
+    if fen is None:
+        return make_response({"error": "Missing FEN string"}, 400)
+    
+    best_move = get_stockfish_move(fen)
+    return make_response({"best_move": best_move}, 200)
+
+
 
 
 
@@ -159,6 +195,28 @@ def on_move(data):
         db.session.commit()
         emit('move_broadcast', {'from_position': from_position, 'to_position': to_position}, room=game_code)
 
+        best_move = get_stockfish_move(game.fen)
+
+        move = Move(game_id=game.id, from_position=best_move.from_position, to_position=best_move.to_position)
+        db.session.add(move)
+        db.session.commit()
+
+        emit('move_broadcast', {'from_position': from_position, 'to_position': to_position}, room=game_code)
+        emit('move_broadcast', {'from_position': best_move.from_position, 'to_position': best_move.to_position}, room=game_code)
+
+def update_fen(current_fen, from_position, to_position):
+    board = chess.Board(current_fen)
+    from_square = chess.SQUARE_NAMES.index(from_position)
+    to_square = chess.SQUARE_NAMES.index(to_position)
+    move = chess.Move(from_square, to_square)
+
+    if move not in board.legal_moves:
+        return current_fen
+    board.push(move)
+    updated_fen = board.fen()
+
+    return updated_fen
+
 def generate_game_code(size=6, chars=string.ascii_uppercase + string.digits):
     return ''.join(random.choice(chars) for _ in range(size))
 
@@ -166,3 +224,4 @@ if __name__ == '__main__':
     with app.app_context():
         db.create_all()
     socketio.run(app, port=5555, debug=True)
+    engine.quit()

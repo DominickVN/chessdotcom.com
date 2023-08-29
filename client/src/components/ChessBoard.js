@@ -3,6 +3,7 @@ import { Chess } from 'chess.js';
 import Chessboard from "chessboardjsx";
 import './CommonChessStyles.css';
 import ChatBox from './ChatBox';
+import ChessAI from './ChessAI';
 import axios from 'axios';
 
 const ChessBoard = ({
@@ -11,7 +12,6 @@ const ChessBoard = ({
     blackTime, setBlackTime,
     messages, messageInput, setMessageInput, handleSendMessage
 }) => {
-    const [fen, setFen] = useState("start");
     const [chess] = useState(() => new Chess());
     const [error, setError] = useState(null);
     const [timer, setTimer] = useState(null);
@@ -20,6 +20,8 @@ const ChessBoard = ({
     const [isPromoting, setIsPromoting] = useState(false);
     const [promotionSquare, setPromotionSquare] = useState(null);
     const [lastMove, setLastMove] = useState(null);
+    const [fen, setFen] = useState('initial FEN string');
+    const [aiTurn, setAiTurn] = useState(false);
 
     useEffect(() => {
         if (timer) {
@@ -349,6 +351,9 @@ const ChessBoard = ({
                 setMessageInput={setMessageInput}
                 handleSendMessage={handleSendMessage}
             />
+            <div>
+                <ChessAI fen={fen} setFen={setFen} aiTurn={aiTurn} />
+            </div>
         </div>
     );
 }

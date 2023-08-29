@@ -35,8 +35,6 @@ button {
   transition: all 0.3s ease;
 }
 
-
-
 /* Dark Mode Styling */
 [data-theme="dark"] body, [data-theme="dark"] html {
   background-color: #222;

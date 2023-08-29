@@ -10,8 +10,6 @@ import NavBar from "./NavBar";
 import './global.css';
 import { joinGame, sendMove, onMoveReceived, onPlayerJoined } from './SocketManager';
 
-
-
 function JoinGame() {
   let { gameCode } = useParams();
   
