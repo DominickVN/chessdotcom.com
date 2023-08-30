@@ -76,6 +76,7 @@ function App() {
             <Route path="/stats" component={StatsPage} />
             <Route path="/join/:gameCode" component={JoinGame} />
             <Route path="/play-stockfish" component={StockfishINT} />
+            <Route path="/test-board" component={ChessAIBoard} />
         </Switch>
       <Route path="/join" component={ChessGame} />
       </div>

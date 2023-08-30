@@ -4,7 +4,7 @@ import { Chess } from "chess.js";
 
 const StockfishINT = () => {
   const game = useRef(new Chess());
-  const stockfish = useRef(new Worker("client/src/components/StockfishAI.js"));
+  const stockfish = useRef(new Worker("client/public/js/StockfishAI.js"));
 
   useEffect(() => {
     stockfish.current.onmessage = (event) => {

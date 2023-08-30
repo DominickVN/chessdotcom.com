@@ -30,6 +30,9 @@ function HomePage() {
           <Link to="/play-stockfish">
           <button>Play Against Stockfish</button>
           </Link>
+          <Link to="/test-board">
+          <button>Test</button>
+          </Link>
         </div>
       </div>
     );
