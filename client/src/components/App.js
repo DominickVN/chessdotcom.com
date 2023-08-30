@@ -9,6 +9,8 @@ import StatsPage from "./StatsPage";
 import NavBar from "./NavBar";
 import './global.css';
 import { joinGame, sendMove, onMoveReceived, onPlayerJoined } from './SocketManager';
+import ChessAIBoard from './ChessAIBoard';
+import StockfishINT from './Stockfish';
 
 function JoinGame() {
   let { gameCode } = useParams();
@@ -73,6 +75,7 @@ function App() {
             <Route path="/game/:gameId" component={ChessGame} />
             <Route path="/stats" component={StatsPage} />
             <Route path="/join/:gameCode" component={JoinGame} />
+            <Route path="/play-stockfish" component={StockfishINT} />
         </Switch>
       <Route path="/join" component={ChessGame} />
       </div>

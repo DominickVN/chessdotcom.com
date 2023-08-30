@@ -1,4 +1,4 @@
-from flask import request, make_response, Flask
+from flask import request, make_response, Flask, jsonify
 from extensions import db
 from models import Game, Move, Player, ChatMessage
 import string
@@ -71,14 +71,23 @@ def get_stockfish_move(fen):
     return best_move
 
 @app.route('/best_move', methods=['POST'])
-def best_move():
+def get_best_move():
     fen = request.json.get('fen')
-    if fen is None:
-        return make_response({"error": "Missing FEN string"}, 400)
-    
-    best_move = get_stockfish_move(fen)
-    return make_response({"best_move": best_move}, 200)
+    if not fen:
+        return jsonify({'error': 'FEN string required'}), 400
 
+    stockfish = subprocess.Popen('stockfish', universal_newlines=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+    stockfish.stdin.write(f'position fen {fen}\n')
+    stockfish.stdin.write('go depth 10\n')
+    stockfish.stdin.write('quit\n')
+    output = stockfish.communicate()[0]
+    
+    best_move_line = [line for line in output.split('\n') if 'bestmove' in line]
+    if best_move_line:
+        best_move = best_move_line[0].split(' ')[1]
+        return jsonify({'best_move': best_move})
+
+    return jsonify({'error': 'Could not calculate best move'}), 500
 
 
 

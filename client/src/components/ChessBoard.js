@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
+import { sendMove, onMoveReceived } from './SocketManager';
 import { Chess } from 'chess.js';
 import Chessboard from "chessboardjsx";
 import './CommonChessStyles.css';
 import ChatBox from './ChatBox';
-import ChessAI from './ChessAI';
 import axios from 'axios';
 
 const ChessBoard = ({
@@ -22,6 +22,7 @@ const ChessBoard = ({
     const [lastMove, setLastMove] = useState(null);
     const [fen, setFen] = useState('initial FEN string');
     const [aiTurn, setAiTurn] = useState(false);
+    let gameCode = (0);
 
     useEffect(() => {
         if (timer) {
@@ -53,7 +54,10 @@ const ChessBoard = ({
         }, 1000);
 
         setTimer(newTimer);
-
+        const handleOpponentMove = (from, to) => {
+            onMoveReceived((data) => {
+                handleOpponentMove(data.from, data.to);
+        })};
         return () => {
             clearInterval(newTimer);
         };
@@ -104,6 +108,8 @@ const ChessBoard = ({
           console.error("An error occurred:", error);
           setError("Invalid move!");
         }
+
+        sendMove(gameCode, from, to);
         
         if (endGame) {
           return;
@@ -352,7 +358,6 @@ const ChessBoard = ({
                 handleSendMessage={handleSendMessage}
             />
             <div>
-                <ChessAI fen={fen} setFen={setFen} aiTurn={aiTurn} />
             </div>
         </div>
     );

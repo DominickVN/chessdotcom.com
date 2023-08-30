@@ -30,6 +30,7 @@ function ChessGame({ match }) {
     const [messages, setMessages] = useState([]);
     const [messageInput, setMessageInput] = useState('');
     const [linkCopied, setLinkCopied] = useState(false);
+    const [aiTurn, setAiTurn] = useState(false);
 
     const makeMove = (from, to) => {
         const move = {
@@ -53,6 +54,7 @@ function ChessGame({ match }) {
         if (result) {
             setFen(chess.fen());
         }
+        setAiTurn(true);
     };
 
     const sendMessage = (message) => {
@@ -66,7 +68,6 @@ function ChessGame({ match }) {
     };
 
     useEffect(() => {
-
         console.log("Current actual player color in ChessGame:", actualPlayerColor);
 
         let playerId = localStorage.getItem('playerId') || generatePlayerId();
@@ -112,7 +113,8 @@ function ChessGame({ match }) {
         return () => {
             socket.off('move_broadcast');
         };
-    }, [gameId, gameCode]);
+        setAiTurn(false);
+    }, [gameId, gameCode, fen]);
 
     const handleCopyLink = () => {
         navigator.clipboard.writeText(shareableLink)

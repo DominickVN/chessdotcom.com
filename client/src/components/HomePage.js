@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import './HomePage.css';
 
 function HomePage() {
     const [darkMode, setDarkMode] = useState(false);
+    const history = useHistory();
 
     useEffect(() => {
         const currentTheme = localStorage.getItem('theme') || 'light';
@@ -18,11 +19,17 @@ function HomePage() {
         setDarkMode(!darkMode);
     }
 
+    const playAgainstStockfish = () => {
+      history.push('/play-stockfish');
+    };
+
     return (
       <div className="home-page">
         <div className="centered-content"> 
           <h1>Welcome to Chessdotcom.com</h1>
-          <Link to="/settings" className="play-button">Play Chess</Link>
+          <Link to="/play-stockfish">
+          <button>Play Against Stockfish</button>
+          </Link>
         </div>
       </div>
     );
